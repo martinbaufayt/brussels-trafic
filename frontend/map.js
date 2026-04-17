@@ -26,7 +26,10 @@ async function refreshMap() {
 
     if (layer) map.removeLayer(layer);
 
-    const active = geojson.features.filter(f => f.properties.recorded_at !== null);
+    const active = geojson.features.filter(f => {
+      const p = f.properties;
+      return p.count !== null || p.speed !== null || p.occupancy !== null;
+    });
     const filtered = { type: "FeatureCollection", features: active };
 
     layer = L.geoJSON(filtered, {

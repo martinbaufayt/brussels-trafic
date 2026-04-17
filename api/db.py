@@ -46,6 +46,8 @@ def insert_readings(data: dict, recorded_at: str) -> None:
         result = sensor.get("results", {}).get("1m")
         if result is None:
             continue
+        if result.get("count") is None and result.get("speed") is None and result.get("occupancy") is None:
+            continue
         rows.append((
             traverse_name,
             recorded_at,
