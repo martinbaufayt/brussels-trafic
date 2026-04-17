@@ -57,8 +57,9 @@ def insert_readings(data: dict, recorded_at: str) -> None:
 
     sql = """
         INSERT INTO traffic_readings (traverse_name, recorded_at, interval_min, count, speed, occupancy)
-        VALUES %s
-        ON CONFLICT DO NOTHING
+        SELECT d.traverse_name, v.recorded_at, v.interval_min, v.count, v.speed, v.occupancy
+        FROM (VALUES %s) AS v(traverse_name, recorded_at, interval_min, count, speed, occupancy)
+        JOIN devices d USING (traverse_name)
     """
     with get_conn() as conn:
         with conn.cursor() as cur:
