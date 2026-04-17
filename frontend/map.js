@@ -26,7 +26,10 @@ async function refreshMap() {
 
     if (layer) map.removeLayer(layer);
 
-    layer = L.geoJSON(geojson, {
+    const active = geojson.features.filter(f => f.properties.speed !== null || f.properties.count !== null);
+    const filtered = { type: "FeatureCollection", features: active };
+
+    layer = L.geoJSON(filtered, {
       pointToLayer(feature, latlng) {
         const speed = feature.properties.speed;
         return L.circleMarker(latlng, {
@@ -54,7 +57,7 @@ async function refreshMap() {
     }).addTo(map);
 
     const time = new Date().toLocaleTimeString("fr-BE");
-    statusEl.textContent = `${geojson.features.length} capteurs — actualisé à ${time}`;
+    statusEl.textContent = `${active.length} / ${geojson.features.length} capteurs actifs — actualisé à ${time}`;
   } catch {
     statusEl.textContent = "Erreur de chargement des données.";
   }

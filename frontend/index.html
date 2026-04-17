@@ -7,8 +7,61 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: sans-serif; }
-    #map { height: 100vh; }
+    body { font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+
+    #header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 0 20px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 2000;
+    }
+    #header h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+    #header h1 span { color: #7eb8f7; }
+
+    #info-btn {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #info-btn:hover { background: rgba(255,255,255,0.2); }
+
+    #info-panel {
+      display: none;
+      position: absolute;
+      top: 62px;
+      right: 16px;
+      width: 300px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      z-index: 2000;
+      padding: 16px 18px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    #info-panel.open { display: block; }
+    #info-panel h2 { font-size: 14px; margin-bottom: 8px; color: #1a1a2e; }
+    #info-panel p { color: #444; margin-bottom: 8px; }
+    #info-panel ul { padding-left: 18px; color: #444; }
+    #info-panel a { color: #2563eb; text-decoration: none; }
+    #info-panel a:hover { text-decoration: underline; }
+    #info-panel .close-btn {
+      position: absolute; top: 10px; right: 12px;
+      background: none; border: none; font-size: 18px;
+      cursor: pointer; color: #888; line-height: 1;
+    }
+
+    #map { flex: 1; }
+
     #status {
       position: absolute;
       bottom: 16px;
@@ -23,7 +76,7 @@
     }
     #legend {
       position: absolute;
-      top: 16px;
+      top: 68px;
       right: 16px;
       background: rgba(255,255,255,0.9);
       padding: 10px 14px;
@@ -35,8 +88,7 @@
     }
     .dot {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 12px; height: 12px;
       border-radius: 50%;
       margin-right: 6px;
       vertical-align: middle;
@@ -44,16 +96,41 @@
   </style>
 </head>
 <body>
+  <div id="header">
+    <h1>Brussels Traffic <span>Live</span></h1>
+    <button id="info-btn" onclick="toggleInfo()">À propos</button>
+  </div>
+
+  <div id="info-panel">
+    <button class="close-btn" onclick="toggleInfo()">&#x2715;</button>
+    <h2>Brussels Traffic Live</h2>
+    <p>Carte interactive des capteurs de trafic routier à Bruxelles, mise à jour toutes les minutes.</p>
+    <p><strong>Source :</strong> <a href="https://data.mobility.brussels/traffic/api/counts/" target="_blank">Brussels Mobility API</a> — 88 capteurs de détection.</p>
+    <p><strong>Stack :</strong></p>
+    <ul>
+      <li>Collecte automatisée via <strong>APScheduler</strong></li>
+      <li>Stockage historique dans <strong>PostGIS</strong></li>
+      <li>API <strong>FastAPI</strong> (GeoJSON)</li>
+      <li>Carte <strong>Leaflet.js</strong></li>
+    </ul>
+    <p style="margin-top:10px; color:#888; font-size:12px;">Seuls les capteurs ayant transmis des données dans la dernière minute sont affichés.</p>
+  </div>
+
   <div id="map"></div>
   <div id="status">Chargement...</div>
   <div id="legend">
     <strong>Vitesse moyenne</strong><br>
     <span class="dot" style="background:#e74c3c"></span> &lt; 20 km/h<br>
     <span class="dot" style="background:#f39c12"></span> 20 – 50 km/h<br>
-    <span class="dot" style="background:#27ae60"></span> &gt; 50 km/h<br>
-    <span class="dot" style="background:#95a5a6"></span> Pas de données
+    <span class="dot" style="background:#27ae60"></span> &gt; 50 km/h
   </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="map.js"></script>
+  <script>
+    function toggleInfo() {
+      document.getElementById("info-panel").classList.toggle("open");
+    }
+  </script>
 </body>
 </html>
