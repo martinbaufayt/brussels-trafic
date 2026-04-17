@@ -26,7 +26,7 @@ async function refreshMap() {
 
     if (layer) map.removeLayer(layer);
 
-    const active = geojson.features.filter(f => f.properties.speed !== null || f.properties.count !== null);
+    const active = geojson.features.filter(f => f.properties.recorded_at !== null);
     const filtered = { type: "FeatureCollection", features: active };
 
     layer = L.geoJSON(filtered, {
@@ -56,8 +56,12 @@ async function refreshMap() {
       },
     }).addTo(map);
 
+    const total = geojson.features.length;
+    const infoCount = document.getElementById("info-count");
+    if (infoCount) infoCount.textContent = total;
+
     const time = new Date().toLocaleTimeString("fr-BE");
-    statusEl.textContent = `${active.length} / ${geojson.features.length} capteurs actifs — actualisé à ${time}`;
+    statusEl.textContent = `${active.length} / ${total} capteurs actifs — actualisé à ${time}`;
   } catch {
     statusEl.textContent = "Erreur de chargement des données.";
   }
