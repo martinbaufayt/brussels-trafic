@@ -6,6 +6,8 @@ The goal is to learn **open-source alternatives to Windows Task Scheduler** for 
 
 [![CI](https://github.com/martinbaufayt/brussels-trafic/actions/workflows/ci.yml/badge.svg)](https://github.com/martinbaufayt/brussels-trafic/actions/workflows/ci.yml)
 
+![Screenshot](docs/screenshot.png)
+
 ## What it does
 
 - Fetches live traffic data from the [Brussels Mobility API](https://data.mobility.brussels/traffic/api/counts/) every minute (88 sensors across the city)
